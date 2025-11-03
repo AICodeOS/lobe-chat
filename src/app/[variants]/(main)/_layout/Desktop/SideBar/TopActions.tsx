@@ -1,5 +1,5 @@
-import { ActionIcon, ActionIconProps, Hotkey } from '@lobehub/ui';
-import { Compass, FolderClosed, MessageSquare, Palette } from 'lucide-react';
+import { createStyles } from 'antd-style';
+import { Compass, FolderClosed, LucideIcon, MessageSquare, Palette } from 'lucide-react';
 import Link from 'next/link';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,28 +9,81 @@ import { useGlobalStore } from '@/store/global';
 import { SidebarTabKey } from '@/store/global/initialState';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useSessionStore } from '@/store/session';
-import { useUserStore } from '@/store/user';
-import { settingsSelectors } from '@/store/user/selectors';
-import { HotkeyEnum } from '@/types/hotkey';
 
-const ICON_SIZE: ActionIconProps['size'] = {
-  blockSize: 40,
-  size: 24,
-  strokeWidth: 2,
-};
+const useStyles = createStyles(({ css, token }) => ({
+  iconWrapper: css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `,
+  label: css`
+    font-size: 11px;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+  `,
+  menuItem: css`
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+    justify-content: center;
+
+    padding-block: 8px;
+    padding-inline: 4px;
+    border-radius: ${token.borderRadiusLG}px;
+
+    color: ${token.colorTextSecondary};
+    text-decoration: none;
+
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: ${token.colorText};
+      background: ${token.colorFillTertiary};
+    }
+  `,
+  menuItemActive: css`
+    color: ${token.colorPrimary};
+    background: ${token.colorPrimaryBg};
+
+    &:hover {
+      background: ${token.colorPrimaryBgHover};
+    }
+  `,
+}));
+
+interface MenuItemProps {
+  active?: boolean;
+  icon: LucideIcon;
+  label: string;
+}
+
+const MenuItem = memo<MenuItemProps>(({ active, icon: Icon, label }) => {
+  const { styles, cx } = useStyles();
+
+  return (
+    <div className={cx(styles.menuItem, active && styles.menuItemActive)}>
+      <div className={styles.iconWrapper}>
+        <Icon size={20} strokeWidth={2} />
+      </div>
+      <div className={styles.label}>{label}</div>
+    </div>
+  );
+});
 
 export interface TopActionProps {
   isPinned?: boolean | null;
   tab?: SidebarTabKey;
 }
 
-//  TODO Change icons
 const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
   const { t } = useTranslation('common');
   const switchBackToChat = useGlobalStore((s) => s.switchBackToChat);
   const { showMarket, enableKnowledgeBase, showAiImage } =
     useServerConfigStore(featureFlagsSelectors);
-  const hotkey = useUserStore(settingsSelectors.getHotkeyById(HotkeyEnum.NavigateToChat));
 
   const isChatActive = tab === SidebarTabKey.Chat && !isPinned;
   const isFilesActive = tab === SidebarTabKey.Files;
@@ -52,51 +105,27 @@ const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
           e.preventDefault();
           switchBackToChat(useSessionStore.getState().activeId);
         }}
+        style={{ textDecoration: 'none' }}
       >
-        <ActionIcon
-          active={isChatActive}
-          icon={MessageSquare}
-          size={ICON_SIZE}
-          title={
-            <Flexbox align={'center'} gap={8} horizontal justify={'space-between'}>
-              <span>{t('tab.chat')}</span>
-              <Hotkey inverseTheme keys={hotkey} />
-            </Flexbox>
-          }
-          tooltipProps={{ placement: 'right' }}
-        />
+        <MenuItem active={isChatActive} icon={MessageSquare} label={t('tab.chat')} />
       </Link>
       {enableKnowledgeBase && (
-        <Link aria-label={t('tab.knowledgeBase')} href={'/files'}>
-          <ActionIcon
-            active={isFilesActive}
-            icon={FolderClosed}
-            size={ICON_SIZE}
-            title={t('tab.knowledgeBase')}
-            tooltipProps={{ placement: 'right' }}
-          />
+        <Link
+          aria-label={t('tab.knowledgeBase')}
+          href={'/files'}
+          style={{ textDecoration: 'none' }}
+        >
+          <MenuItem active={isFilesActive} icon={FolderClosed} label={t('tab.knowledgeBase')} />
         </Link>
       )}
       {showAiImage && (
-        <Link aria-label={t('tab.aiImage')} href={'/image'}>
-          <ActionIcon
-            active={isImageActive}
-            icon={Palette}
-            size={ICON_SIZE}
-            title={t('tab.aiImage')}
-            tooltipProps={{ placement: 'right' }}
-          />
+        <Link aria-label={t('tab.aiImage')} href={'/image'} style={{ textDecoration: 'none' }}>
+          <MenuItem active={isImageActive} icon={Palette} label={t('tab.aiImage')} />
         </Link>
       )}
       {showMarket && (
-        <Link aria-label={t('tab.discover')} href={'/discover'}>
-          <ActionIcon
-            active={isDiscoverActive}
-            icon={Compass}
-            size={ICON_SIZE}
-            title={t('tab.discover')}
-            tooltipProps={{ placement: 'right' }}
-          />
+        <Link aria-label={t('tab.discover')} href={'/discover'} style={{ textDecoration: 'none' }}>
+          <MenuItem active={isDiscoverActive} icon={Compass} label={t('tab.discover')} />
         </Link>
       )}
     </Flexbox>

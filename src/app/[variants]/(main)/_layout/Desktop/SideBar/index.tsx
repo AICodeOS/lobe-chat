@@ -13,8 +13,8 @@ import { systemStatusSelectors } from '@/store/global/selectors';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { electronStylish } from '@/styles/electron';
 
-import Avatar from './Avatar';
 import BottomActions from './BottomActions';
+import Logo from './Logo';
 import PinList from './PinList';
 import TopActions from './TopActions';
 
@@ -37,7 +37,7 @@ const Nav = memo(() => {
       <SideNav
         avatar={
           <div className={electronStylish.nodrag}>
-            <Avatar />
+            <Logo />
           </div>
         }
         bottomActions={
@@ -48,6 +48,7 @@ const Nav = memo(() => {
         className={electronStylish.draggable}
         style={{
           height: '100%',
+          width: 80,
           zIndex: 100,
           ...(isDesktop
             ? { background: 'transparent', borderInlineEnd: 0, paddingBlockStart: 8 }

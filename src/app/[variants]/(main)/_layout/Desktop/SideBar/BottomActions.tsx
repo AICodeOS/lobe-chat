@@ -1,44 +1,64 @@
-import { ActionIcon, ActionIconProps } from '@lobehub/ui';
-import { FlaskConical, Github } from 'lucide-react';
-import Link from 'next/link';
-import { memo } from 'react';
+import { ActionIcon } from '@lobehub/ui';
+import { Tooltip } from 'antd';
+import { LucideX } from 'lucide-react';
+import { Suspense, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
 
-import { GITHUB } from '@/const/url';
-import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
-
-const ICON_SIZE: ActionIconProps['size'] = {
-  blockSize: 36,
-  size: 20,
-  strokeWidth: 1.5,
-};
+import UserAvatar from '@/features/User/UserAvatar';
+import UserPanel from '@/features/User/UserPanel';
+import { useUserStore } from '@/store/user';
+import { preferenceSelectors } from '@/store/user/selectors';
 
 const BottomActions = memo(() => {
   const { t } = useTranslation('common');
+  const hideSettingsMoveGuide = useUserStore(preferenceSelectors.hideSettingsMoveGuide);
+  const updateGuideState = useUserStore((s) => s.updateGuideState);
 
-  const { hideGitHub } = useServerConfigStore(featureFlagsSelectors);
+  const content = (
+    <Suspense fallback={<UserAvatar />}>
+      <UserPanel placement="rightTop">
+        <UserAvatar clickable />
+      </UserPanel>
+    </Suspense>
+  );
 
   return (
     <Flexbox gap={8}>
-      {!hideGitHub && (
-        <Link aria-label={'GitHub'} href={GITHUB} target={'_blank'}>
-          <ActionIcon
-            icon={Github}
-            size={ICON_SIZE}
-            title={'GitHub'}
-            tooltipProps={{ placement: 'right' }}
-          />
-        </Link>
-      )}
-      <Link aria-label={t('labs')} href={'/labs'}>
-        <ActionIcon
-          icon={FlaskConical}
-          size={ICON_SIZE}
-          title={t('labs')}
-          tooltipProps={{ placement: 'right' }}
-        />
+      {/* TODO: Add custom bottom menu items here */}
+      {/* Example:
+      <Link aria-label="Custom Menu" href="/custom-menu">
+        <MenuItem icon={YourIcon} label="Custom Menu" />
       </Link>
+      */}
+
+      {/* User Avatar */}
+      {hideSettingsMoveGuide ? (
+        content
+      ) : (
+        <Tooltip
+          color={'blue'}
+          open
+          placement={'rightTop'}
+          prefixCls={'guide'}
+          title={
+            <Flexbox align={'center'} gap={8} horizontal>
+              <div style={{ lineHeight: '22px' }}>{t('userPanel.moveGuide')}</div>
+              <ActionIcon
+                icon={LucideX}
+                onClick={() => {
+                  updateGuideState({ moveSettingsToAvatar: true });
+                }}
+                role={'close-guide'}
+                size={'small'}
+                style={{ color: 'inherit' }}
+              />
+            </Flexbox>
+          }
+        >
+          {content}
+        </Tooltip>
+      )}
     </Flexbox>
   );
 });
