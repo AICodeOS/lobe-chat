@@ -39,6 +39,7 @@ export const config = {
     '/changelog(.*)',
     '/settings(.*)',
     '/image',
+    '/agent',
     '/files',
     '/files(.*)',
     '/repos(.*)',

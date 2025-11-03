@@ -11,7 +11,7 @@ const useStyles = createStyles(({ css, token }) => ({
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 100%;
+    height: 100vh;
   `,
   iframe: css`
     width: 100%;
@@ -38,23 +38,43 @@ const AgentFrame = memo(() => {
   const { styles, cx } = useStyles();
   const { t } = useTranslation('common');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const handleLoad = () => {
+    console.log('iframe loaded successfully');
+    setLoading(false);
+  };
+
+  const handleError = () => {
+    console.error('iframe failed to load');
+    setError(true);
     setLoading(false);
   };
 
   return (
     <div className={styles.container}>
-      <div className={cx(styles.loading, !loading && styles.loadingHidden)}>
-        <Flexbox align="center" gap={16} justify="center">
-          <Spin size="large" />
-          <div style={{ fontSize: 16 }}>{t('loading')}</div>
-        </Flexbox>
-      </div>
+      {loading && !error && (
+        <div className={styles.loading}>
+          <Flexbox align="center" gap={16} justify="center">
+            <Spin size="large" />
+            <div style={{ fontSize: 16 }}>{t('loading')}</div>
+          </Flexbox>
+        </div>
+      )}
+      {error && (
+        <div className={styles.loading}>
+          <Flexbox align="center" gap={16} justify="center">
+            <div style={{ fontSize: 16, color: 'red' }}>
+              Failed to load iframe. Please check the URL.
+            </div>
+          </Flexbox>
+        </div>
+      )}
       <iframe
         className={styles.iframe}
+        onError={handleError}
         onLoad={handleLoad}
-        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
         src="http://joyagent.aicodetime.com"
         title="智能体"
       />
