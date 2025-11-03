@@ -1,16 +1,14 @@
 'use client';
 
-import { ActionIcon, Dropdown, Icon } from '@lobehub/ui';
+import { ActionIcon, Button, Icon } from '@lobehub/ui';
 import { createStyles } from 'antd-style';
-import { Bot, MessageSquarePlus, SquarePlus, Users } from 'lucide-react';
+import { Bot, MessageSquarePlus, SquarePlus, Users, Search } from 'lucide-react';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
 
-import { ProductLogo } from '@/components/Branding';
 import { ChatGroupWizard } from '@/components/ChatGroupWizard';
 import { useGroupTemplates } from '@/components/ChatGroupWizard/templates';
-import { DESKTOP_HEADER_ICON_SIZE } from '@/const/layoutTokens';
 import { DEFAULT_CHAT_GROUP_CHAT_CONFIG } from '@/const/settings';
 import { useActionSWR } from '@/libs/swr';
 import { useChatGroupStore } from '@/store/chatGroup';
@@ -23,14 +21,32 @@ import TogglePanelButton from '../../../features/TogglePanelButton';
 import SessionSearchBar from '../../features/SessionSearchBar';
 
 export const useStyles = createStyles(({ css, token }) => ({
-  logo: css`
-    color: ${token.colorText};
-    fill: ${token.colorText};
-  `,
   top: css`
     position: sticky;
     inset-block-start: 0;
     padding-block-start: 10px;
+  `,
+  newAgentButton: css`
+    font-size: 13px;
+    height: 36px;
+    font-weight: 500;
+    width: 200px;
+    padding-inline: 16px;
+    border-radius: ${token.borderRadius}px;
+    border: 1px solid ${token.colorBorderSecondary};
+    background: ${token.colorBgContainer};
+
+    &:hover {
+      border-color: ${token.colorPrimary};
+      background: ${token.colorFillQuaternary};
+    }
+  `,
+  searchButton: css`
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `,
 }));
 
@@ -45,6 +61,7 @@ const Header = memo(() => {
   const [createGroup] = useChatGroupStore((s) => [s.createGroup]);
   const { showCreateSession, enableGroupChat } = useServerConfigStore(featureFlagsSelectors);
   const [isGroupWizardOpen, setIsGroupWizardOpen] = useState(false);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   // We need pass inital member list so we cannot use mutate
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
@@ -202,68 +219,36 @@ const Header = memo(() => {
 
   return (
     <Flexbox className={styles.top} gap={16} paddingInline={8}>
-      <Flexbox align={'flex-start'} horizontal justify={'space-between'}>
-        <Flexbox
-          align={'center'}
-          gap={4}
-          horizontal
-          style={{
-            paddingInlineStart: 4,
-            paddingTop: 2,
-          }}
-        >
-          <ProductLogo className={styles.logo} size={36} type={'text'} />
-        </Flexbox>
-        <Flexbox align={'center'} gap={4} horizontal>
+      <Flexbox align={'center'} horizontal justify={'space-between'}>
+        <Flexbox align={'center'} gap={4} horizontal style={{ flexShrink: 0 }}>
           <TogglePanelButton />
-          {showCreateSession &&
-            (enableGroupChat ? (
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      icon: <Icon icon={Bot} />,
-                      key: 'newAgent',
-                      label: t('newAgent'),
-                      onClick: () => {
-                        mutateAgent();
-                      },
-                    },
-                    {
-                      icon: <Icon icon={Users} />,
-                      key: 'newGroup',
-                      label: t('newGroupChat'),
-                      onClick: () => {
-                        setIsGroupWizardOpen(true);
-                      },
-                    },
-                  ],
-                }}
-                trigger={['hover']}
-              >
-                <ActionIcon
-                  icon={SquarePlus}
-                  loading={isValidatingAgent || isCreatingGroup}
-                  size={DESKTOP_HEADER_ICON_SIZE}
-                  style={{ flex: 'none' }}
-                />
-              </Dropdown>
-            ) : (
-              <ActionIcon
-                icon={MessageSquarePlus}
-                loading={isValidatingAgent}
-                onClick={() => mutateAgent()}
-                size={DESKTOP_HEADER_ICON_SIZE}
-                style={{ flex: 'none' }}
-                title={t('newAgent')}
-                tooltipProps={{
-                  placement: 'bottom',
-                }}
-              />
-            ))}
+        </Flexbox>
+
+        <Flexbox align={'center'} style={{ flex: 1, justifyContent: 'center' }}>
+          <Button
+            className={styles.newAgentButton}
+            icon={<Icon icon={MessageSquarePlus} />}
+            onClick={() => mutateAgent()}
+            loading={isValidatingAgent}
+            type={'default'}
+          >
+            {t('newAgent')}
+          </Button>
+        </Flexbox>
+
+        <Flexbox align={'center'} gap={4} horizontal style={{ flexShrink: 0 }}>
+          <ActionIcon
+            className={styles.searchButton}
+            icon={Search}
+            onClick={() => setIsSearchVisible(!isSearchVisible)}
+            title={t('searchAgentPlaceholder')}
+            tooltipProps={{
+              placement: 'bottom',
+            }}
+          />
         </Flexbox>
       </Flexbox>
-      <SessionSearchBar />
+      {isSearchVisible && <SessionSearchBar />}
 
       {enableGroupChat && (
         <ChatGroupWizard
