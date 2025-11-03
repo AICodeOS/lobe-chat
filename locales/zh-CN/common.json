@@ -334,6 +334,7 @@
     }
   },
   "tab": {
+    "agent": "智能体",
     "aiImage": "AI 绘画",
     "chat": "会话",
     "discover": "发现",

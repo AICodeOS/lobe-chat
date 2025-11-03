@@ -334,6 +334,7 @@
     }
   },
   "tab": {
+    "agent": "Agent",
     "aiImage": "AI Painting",
     "chat": "Chat",
     "discover": "Discover",

@@ -1,5 +1,5 @@
 import { createStyles } from 'antd-style';
-import { Compass, FolderClosed, LucideIcon, MessageSquare, Palette } from 'lucide-react';
+import { Bot, Compass, FolderClosed, LucideIcon, MessageSquare, Palette } from 'lucide-react';
 import Link from 'next/link';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -88,6 +88,7 @@ const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
   const isChatActive = tab === SidebarTabKey.Chat && !isPinned;
   const isFilesActive = tab === SidebarTabKey.Files;
   const isDiscoverActive = tab === SidebarTabKey.Discover;
+  const isAgentActive = tab === SidebarTabKey.Agent;
   const isImageActive = tab === SidebarTabKey.Image;
 
   return (
@@ -128,6 +129,9 @@ const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
           <MenuItem active={isDiscoverActive} icon={Compass} label={t('tab.discover')} />
         </Link>
       )}
+      <Link aria-label={t('tab.agent')} href={'/agent'} style={{ textDecoration: 'none' }}>
+        <MenuItem active={isAgentActive} icon={Bot} label={t('tab.agent')} />
+      </Link>
     </Flexbox>
   );
 });

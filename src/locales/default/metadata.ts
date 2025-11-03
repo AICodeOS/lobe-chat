@@ -1,4 +1,8 @@
 export default {
+  agent: {
+    description: '智能体工作台，打造专属的 AI 智能体',
+    title: '智能体',
+  },
   changelog: {
     description: '持续追踪 {{appName}} 的新功能和改进',
     title: '更新日志',

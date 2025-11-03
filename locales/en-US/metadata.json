@@ -1,4 +1,8 @@
 {
+  "agent": {
+    "description": "Agent Workspace - Build your custom AI agents",
+    "title": "Agent"
+  },
   "changelog": {
     "description": "Stay updated on the new features and improvements of {{appName}}",
     "title": "Changelog"
