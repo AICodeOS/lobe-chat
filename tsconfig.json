@@ -39,7 +39,13 @@
     "tmp",
     "temp",
     ".temp",
-    "e2e"
+    "e2e",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/test/**",
+    "**/tests/**",
+    "**/__tests__/**",
+    "**/vitest.config.*"
   ],
   "include": ["**/*.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "next-env.d.ts"]
 }
