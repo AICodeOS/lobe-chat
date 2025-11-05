@@ -35,7 +35,7 @@ const useStyles = createStyles(({ css, token }) => ({
 }));
 
 const AgentFrame = memo(() => {
-  const { styles, cx } = useStyles();
+  const { styles } = useStyles();
   const { t } = useTranslation('common');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -64,7 +64,7 @@ const AgentFrame = memo(() => {
       {error && (
         <div className={styles.loading}>
           <Flexbox align="center" gap={16} justify="center">
-            <div style={{ fontSize: 16, color: 'red' }}>
+            <div style={{ color: 'red', fontSize: 16 }}>
               Failed to load iframe. Please check the URL.
             </div>
           </Flexbox>

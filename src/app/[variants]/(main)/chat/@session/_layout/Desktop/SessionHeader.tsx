@@ -2,7 +2,7 @@
 
 import { ActionIcon, Button, Icon } from '@lobehub/ui';
 import { createStyles } from 'antd-style';
-import { Bot, MessageSquarePlus, SquarePlus, Users, Search } from 'lucide-react';
+import { MessageSquarePlus, Search } from 'lucide-react';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
@@ -21,19 +21,16 @@ import TogglePanelButton from '../../../features/TogglePanelButton';
 import SessionSearchBar from '../../features/SessionSearchBar';
 
 export const useStyles = createStyles(({ css, token }) => ({
-  top: css`
-    position: sticky;
-    inset-block-start: 0;
-    padding-block-start: 10px;
-  `,
   newAgentButton: css`
-    font-size: 13px;
-    height: 36px;
-    font-weight: 500;
     width: 200px;
+    height: 36px;
     padding-inline: 16px;
-    border-radius: ${token.borderRadius}px;
     border: 1px solid ${token.colorBorderSecondary};
+    border-radius: ${token.borderRadius}px;
+
+    font-size: 13px;
+    font-weight: 500;
+
     background: ${token.colorBgContainer};
 
     &:hover {
@@ -42,11 +39,17 @@ export const useStyles = createStyles(({ css, token }) => ({
     }
   `,
   searchButton: css`
-    width: 32px;
-    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    width: 32px;
+    height: 32px;
+  `,
+  top: css`
+    position: sticky;
+    inset-block-start: 0;
+    padding-block-start: 10px;
   `,
 }));
 
@@ -59,7 +62,7 @@ const Header = memo(() => {
     s.refreshSessions,
   ]);
   const [createGroup] = useChatGroupStore((s) => [s.createGroup]);
-  const { showCreateSession, enableGroupChat } = useServerConfigStore(featureFlagsSelectors);
+  const { enableGroupChat } = useServerConfigStore(featureFlagsSelectors);
   const [isGroupWizardOpen, setIsGroupWizardOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
 
@@ -228,8 +231,8 @@ const Header = memo(() => {
           <Button
             className={styles.newAgentButton}
             icon={<Icon icon={MessageSquarePlus} />}
-            onClick={() => mutateAgent()}
             loading={isValidatingAgent}
+            onClick={() => mutateAgent()}
             type={'default'}
           >
             {t('newAgent')}
